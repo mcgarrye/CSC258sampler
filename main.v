@@ -2,7 +2,7 @@ module sampler (
         input CLOCK_50,
         inout PS2_CLK,
         inout PS2_DAT,
-	output [2:0] sound
+	output [2:0] LEDR
         );
     
     assign reset = 0;
@@ -59,5 +59,5 @@ module sampler (
             16'b0000000000000001: out = 3'b011;//h_output
         endcase
     end
-    assign sound = out;   
+    assign LEDR = out;   
 endmodule
