@@ -121,7 +121,7 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 1) (
 	inout PS2_CLK,
 	inout PS2_DAT,
 
-	output q
+	output q, w, e, r, t, y, u, i, o, p, a, s, d, f, g, h,
 	output left, right, up, down
 	);
 
