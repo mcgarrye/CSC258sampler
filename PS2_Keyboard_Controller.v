@@ -121,7 +121,7 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 1) (
 	inout PS2_CLK,
 	inout PS2_DAT,
 
-	output q, w, e, r, t, y, u, i, o, p, a, s, d, f, g, h,
+	output q, w, e, r, t, y, u, i, o,
 	output left, right, up, down
 	);
 
@@ -141,22 +141,15 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 1) (
 		// controller. Two keys may have the same make/break codes
 		// if one of them is a secondary code.
 		Q_CODE = 8'h15,
-		W_CODE = 8'h1d,
+		W_CODE = 8'h1D,
 		E_CODE = 8'h24,
-		R_CODE = 8'h2d,
-		T_CODE = 8'h2c,
+		R_CODE = 8'h2D,
+		T_CODE = 8'h2C,
 		Y_CODE = 8'h35,
-		U_CODE = 8'h3c,
+		U_CODE = 8'h3C,
 		I_CODE = 8'h43,
 		O_CODE = 8'h44,
-		P_CODE = 8'h4D,
-		A_CODE = 8'h1c,
-		S_CODE = 8'h1b,
-		D_CODE = 8'h23,
-		F_CODE = 8'h2b,
-		G_CODE = 8'h34,
-		H_CODE = 8'h33,
-		LEFT_CODE  = 8'h6b,
+		LEFT_CODE  = 8'h6B,
 		RIGHT_CODE = 8'h74,
 		UP_CODE    = 8'h75,
 		DOWN_CODE  = 8'h72;
@@ -192,13 +185,6 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 1) (
 	assign u = u_press && ~(u_lock && PULSE_OR_HOLD);
 	assign i = i_press && ~(i_lock && PULSE_OR_HOLD);
 	assign o = o_press && ~(o_lock && PULSE_OR_HOLD);
-	assign p = p_press && ~(p_lock && PULSE_OR_HOLD);
-	assign a = a_press && ~(a_lock && PULSE_OR_HOLD);
-	assign s = s_press && ~(s_lock && PULSE_OR_HOLD);
-	assign d = d_press && ~(d_lock && PULSE_OR_HOLD);
-	assign f = f_press && ~(f_lock && PULSE_OR_HOLD);
-	assign g = g_press && ~(g_lock && PULSE_OR_HOLD);
-	assign h = h_press && ~(h_lock && PULSE_OR_HOLD);
 
 	assign left  = left_press && ~(left_lock && PULSE_OR_HOLD);
 	assign right = right_press && ~(right_lock && PULSE_OR_HOLD);
@@ -234,13 +220,6 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 1) (
 		u_lock <= u_press;
 		i_lock <= i_press;
 		o_lock <= o_press;
-		p_lock <= p_press;
-		a_lock <= a_press;
-		s_lock <= s_press;
-		d_lock <= d_press;
-		f_lock <= f_press;
-		g_lock <= g_press;
-		h_lock <= h_press;
 
 		left_lock <= left_press;
 		right_lock <= right_press;
@@ -260,13 +239,6 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 1) (
 			u_press <= 1'b0;
 			i_press <= 1'b0;
 			o_press <= 1'b0;
-			p_press <= 1'b0;
-			a_press <= 1'b0;
-			s_press <= 1'b0;
-			d_press <= 1'b0;
-			f_press <= 1'b0;
-			g_press <= 1'b0;
-			h_press <= 1'b0;
 			left_press  <= 1'b0;
 			right_press <= 1'b0;
 			up_press    <= 1'b0;
@@ -282,13 +254,6 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 1) (
 			u_lock <= 1'b0;
 			i_lock <= 1'b0;
 			o_lock <= 1'b0;
-			p_lock <= 1'b0;
-			a_lock <= 1'b0;
-			s_lock <= 1'b0;
-			d_lock <= 1'b0;
-			f_lock <= 1'b0;
-			g_lock <= 1'b0;
-			h_lock <= 1'b0;
 			left_lock  <= 1'b0;
 			right_lock <= 1'b0;
 			up_lock    <= 1'b0;
@@ -310,13 +275,6 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 1) (
 				U_CODE: u_press <= curr_state == MAKE;
 				I_CODE: i_press <= curr_state == MAKE;
 				O_CODE: o_press <= curr_state == MAKE;
-				P_CODE: p_press <= curr_state == MAKE;
-				A_CODE: a_press <= curr_state == MAKE;
-				S_CODE: s_press <= curr_state == MAKE;
-				D_CODE: d_press <= curr_state == MAKE;
-				F_CODE: f_press <= curr_state == MAKE;
-				G_CODE: g_press <= curr_state == MAKE;
-				H_CODE: h_press <= curr_state == MAKE;
 
 				LEFT_CODE:  left_press  <= curr_state == MAKE;
 				RIGHT_CODE: right_press <= curr_state == MAKE;
