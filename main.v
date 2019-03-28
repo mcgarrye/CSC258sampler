@@ -9,8 +9,8 @@ module sampler (
     wire q, w, e, r, t, y, u, i, o;
     wire left, right, up, down;
     reg [2:0] out;
-    reg [80:0] seq1;
-    reg [80:0] seq2;
+    reg [81:0] seq1;
+    reg [81:0] seq2;
 	
     keyboard_tracker #(.PULSE_OR_HOLD(0)) keyboard(
         .clock(CLOCK_50),
@@ -45,6 +45,8 @@ module sampler (
 		seq1 <= 0;
 		seq2 <= 0;
 		counter <= 0;
+		counter1 <= 0;
+		counter2 <= 0;
 		case(pressed)
 		    9'b100000000: out = 3'b001;//q_output
 		    9'b010000000: out = 3'b010;//w_output
@@ -88,9 +90,9 @@ module sampler (
 		    9'b000000001: seq2 <= (seq2<<9) + pressed;//add o to seq2
 		endcase
 		end
-	else
+	else if (SW[4:1] != 2'b0010 && SW[4:1] != 2'b0001)
 		counter <= 4'b0000;
-	if (SW[2:1] == 2'b00 && SW[3] == 1'b1 &&counter<4'b1001)
+	if (SW[2:1] == 2'b00 && SW[3] == 1'b1 && counter1<4'b1001)
 		begin
 		counter1 <= counter1 + 4'b0001;
 		case(seq1[80:72])
@@ -106,7 +108,7 @@ module sampler (
 		endcase
 		seq1 <= seq1<<9;
 		end
-	if (SW[2:1] == 2'b00 && SW[4] == 1'b1 &&counter<4'b1001)
+	if (SW[2:1] == 2'b00 && SW[4] == 1'b1 && counter1<4'b1001)
 		begin
 		counter2 <= counter2 + 4'b0001;
 		case(seq2[80:72])
