@@ -6,16 +6,15 @@ module sampler (
 	output [2:0] LEDR
         );
     
-    assign reset = 0;
     wire q, w, e, r, t, y, u, i, o;
     wire left, right, up, down;
     reg [2:0] out;
     reg [80:0] seq1;
     reg [80:0] seq2;
-
-    keyboard_tracker #(.PULSE_OR_HOLD(1)) keyboard(
+	
+    keyboard_tracker #(.PULSE_OR_HOLD(0)) keyboard(
         .clock(CLOCK_50),
-        .reset(reset),
+	    .reset(SW[6]),
         
         .PS2_CLK(PS2_CLK),
         .PS2_DAT(PS2_DAT),
