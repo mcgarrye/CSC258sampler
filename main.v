@@ -8,9 +8,6 @@ module sampler (
     
     wire q, w, e, r, t, y, u, i, o;
     wire left, right, up, down;
-    reg [2:0] out;
-    reg [81:0] seq1;
-    reg [81:0] seq2;
 	
     keyboard_tracker #(.PULSE_OR_HOLD(0)) keyboard(
         .clock(CLOCK_50),
@@ -35,18 +32,35 @@ module sampler (
     );
     
     wire [8:0] pressed = {q, w, e, r, t, y, u, i, o};
+    reg [2:0] out;
+    reg [80:0] seq1;
+    reg [80:0] seqtemp1;
+    reg [80:0] seq2;
+    reg [80:0] seqtemp2;
     reg [3:0] counter;
     reg [3:0] counter1;
     reg [3:0] counter2;
     always @(posedge CLOCK_50)
     begin
-	if(SW[4:1] == 2'b0000)
+	if(SW[6] == 1'b1)
 		begin
 		seq1 <= 0;
+		seqtemp1 <= 0;
 		seq2 <= 0;
-		counter <= 0;
+		seqtemp2 <= 0;
 		counter1 <= 0;
 		counter2 <= 0;
+		end
+	if (SW[4:3] == 4'b00 && (counter1>0 || counter2>0))
+		begin
+		seqtemp1 <= seq1;
+		seqtemp2 <= seq2;
+		counter1 <= 0;
+		counter2 <= 0;
+		end
+	if(SW[4:1] == 4'b0000)
+		begin
+		counter <= 0;
 		case(pressed)
 		    9'b100000000: out = 3'b001;//q_output
 		    9'b010000000: out = 3'b010;//w_output
@@ -74,6 +88,7 @@ module sampler (
 		    9'b000000010: seq1 <= (seq1<<9) + pressed;//add i to seq1
 		    9'b000000001: seq1 <= (seq1<<9) + pressed;//add o to seq1
 		endcase
+		seqtemp1 <= seq1;
 		end
 	else if (SW[4:1] == 2'b0010 && counter<4'b1001)
 		begin
@@ -89,13 +104,14 @@ module sampler (
 		    9'b000000010: seq2 <= (seq2<<9) + pressed;//add i to seq2
 		    9'b000000001: seq2 <= (seq2<<9) + pressed;//add o to seq2
 		endcase
+		seqtemp2 <= seq2;
 		end
 	else if (SW[4:1] != 2'b0010 && SW[4:1] != 2'b0001)
 		counter <= 4'b0000;
 	if (SW[2:1] == 2'b00 && SW[3] == 1'b1 && counter1<4'b1001)
 		begin
 		counter1 <= counter1 + 4'b0001;
-		case(seq1[80:72])
+		case(seqtemp1[80:72])
 		    9'b100000000: out = 3'b001;//q_output
 		    9'b010000000: out = 3'b010;//w_output
 		    9'b001000000: out = 3'b100;//e_output
@@ -106,12 +122,12 @@ module sampler (
 		    9'b000000010: out = 3'b011;//i_output
 		    9'b000000001: out = 3'b011;//o_output
 		endcase
-		seq1 <= seq1<<9;
+		seqtemp1 <= seqtemp1<<9;
 		end
-	if (SW[2:1] == 2'b00 && SW[4] == 1'b1 && counter1<4'b1001)
+	if (SW[2:1] == 2'b00 && SW[4] == 1'b1 && counter2<4'b1001)
 		begin
 		counter2 <= counter2 + 4'b0001;
-		case(seq2[80:72])
+		case(seqtemp2[80:72])
 		    9'b100000000: out = 3'b001;//q_output
 		    9'b010000000: out = 3'b010;//w_output
 		    9'b001000000: out = 3'b100;//e_output
@@ -122,8 +138,9 @@ module sampler (
 		    9'b000000010: out = 3'b011;//i_output
 		    9'b000000001: out = 3'b011;//o_output
 		endcase
-		seq2 <= seq2<<9;
+		seqtemp2 <= seqtemp2<<9;
 		end
+	// if (SW[0] == 1'b0 && SW[2:1] == 2'b00) record
     end
     assign LEDR = out;   
 endmodule
