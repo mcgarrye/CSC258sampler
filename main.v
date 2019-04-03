@@ -129,14 +129,14 @@ module main (
 		out2 <= 0; 
  		end 
 
-	if (SW[2:1] == 2'b00 && SW[3] == 1'b1 && counter1<4'b1001)
+	if (SW[2:1] == 2'b00 && SW[3] == 1'b1 && counter1<4'b1010)
 		begin
 		tester <= 1;
 		counter1 <= counter1 + 4'b0001;
 		out2 <= seqtemp1[80:72];
 		seqtemp1 <= seqtemp1<<9;
 		end
-	if (SW[2:1] == 2'b00 && SW[4] == 1'b1 && counter2<4'b1001)
+	if (SW[2:1] == 2'b00 && SW[4] == 1'b1 && counter2<4'b1010)
 		begin
 		tester <= 1;
 		counter2 <= counter2 + 4'b0001;
