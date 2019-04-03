@@ -56,11 +56,7 @@ module main (
 	if(SW[6] == 1'b1)
 		begin
 		seq1 <= 0;
-		seqtemp1 <= 0;
 		seq2 <= 0;
-		seqtemp2 <= 0;
-		counter1 <= 0;
-		counter2 <= 0;
 		end
 
 	if(SW[4:1] == 4'b0000)
