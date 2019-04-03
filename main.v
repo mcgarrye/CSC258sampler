@@ -62,13 +62,6 @@ module main (
 		counter1 <= 0;
 		counter2 <= 0;
 		end
-	if (SW[4:3] == 4'b00) 
- 		begin 
- 		seqtemp1 <= seq1; 
- 		seqtemp2 <= seq2; 
- 		counter1 <= 0; 
- 		counter2 <= 0; 
- 		end 
 
 	if(SW[4:1] == 4'b0000)
 		begin
@@ -118,57 +111,41 @@ module main (
 		    9'b000000001: seq2 <= (seq2<<9) + pressed;//add o to seq2
 		endcase
 		end
-	else if (SW[4:1] != 4'b0010 && SW[4:1] != 4'b0001)
+	else if (SW[2:1] != 2'b10 && SW[2:1] != 2'b01)
 		counter <= 4'b0000;
+    end
+
+    reg tester;
+    reg [8:0] out2;
+    always @(negedge clk2)
+    begin
+	if (SW[4:3] == 2'b00) 
+ 		begin
+		tester <= 0; 
+ 		seqtemp1 <= seq1; 
+ 		seqtemp2 <= seq2; 
+ 		counter1 <= 0; 
+ 		counter2 <= 0;
+		out2 <= 0; 
+ 		end 
+
 	if (SW[2:1] == 2'b00 && SW[3] == 1'b1 && counter1<4'b1001)
 		begin
+		tester <= 1;
 		counter1 <= counter1 + 4'b0001;
-//		case(seqtemp1[80:72])
-//		    9'b100000000: out = 9'b100000000;//q_output
-//		    9'b010000000: out = 9'b010000000;//w_output
-//		    9'b001000000: out = 9'b001000000;//e_output
-//		    9'b000100000: out = 9'b000100000;//r_output
-//		    9'b000010000: out = 9'b000010000;//t_output
-//		    9'b000001000: out = 9'b000001000;//y_output
-//		    9'b000000100: out = 9'b000000100;//u_output
-//		    9'b000000010: out = 9'b000000010;//i_output
-//		    9'b000000001: out = 9'b000000001;//o_output
-//			 default: out =3'b111;
-//		endcase
-		out <= seqtemp1[80:72];
+		out2 <= seqtemp1[80:72];
 		seqtemp1 <= seqtemp1<<9;
 		end
 	if (SW[2:1] == 2'b00 && SW[4] == 1'b1 && counter2<4'b1001)
 		begin
+		tester <= 1;
 		counter2 <= counter2 + 4'b0001;
-//		case(seqtemp2[80:72])
-//		    9'b100000000: out = 9'b100000000;//q_output
-//		    9'b010000000: out = 9'b010000000;//w_output
-//		    9'b001000000: out = 9'b001000000;//e_output
-//		    9'b000100000: out = 9'b000100000;//r_output
-//		    9'b000010000: out = 9'b000010000;//t_output
-//		    9'b000001000: out = 9'b000001000;//y_output
-//		    9'b000000100: out = 9'b000000100;//u_output
-//		    9'b000000010: out = 9'b000000010;//i_output
-//		    9'b000000001: out = 9'b000000001;//o_output
-//			 default: out =3'b111;
-//		endcase
-		out <= seqtemp2[80:72];
+		out2 <= seqtemp2[80:72];
 		seqtemp2 <= seqtemp2<<9;
 		end
     end
 
-    reg tester;
-    always @(negedge clk2)
-    begin
-	case(tester)
-		1'b0: tester <= 1'b1;
-		1'b1: tester <= 1'b0;
-		default: tester <= 1'b0;
-	endcase
-    end
-
-    assign LEDR = out;   
+    assign LEDR = (tester == 1'b1) ? out2 : out;   
 endmodule
 
 
