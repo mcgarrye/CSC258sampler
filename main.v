@@ -49,6 +49,10 @@ module main (
 		out <= 0;
 		seq1 <= 0;
 		seq2 <= 0;
+		seqtemp1 <= 0; 
+ 		seqtemp2 <= 0; 
+ 		counter1 <= 0; 
+ 		counter2 <= 0;
 	    end
 	if(SW[4:1] == 4'b0000)
 	    begin
@@ -62,37 +66,39 @@ module main (
 		    default: out = 0; //silence
 		endcase
 	    end
-	else if (SW[4:0] == 5'b00010 && counter<4'b1000)
+	else if (SW[4:1] == 4'b0001 && counter<4'b1000)
 	    begin
 		out <= 5'b00010;
 		counter <= counter + 4'b0001;
 		case(pressed)
-		    5'b10000: seq1 <= (seq1<<9) + pressed;//add q to seq1
-		    5'b01000: seq1 <= (seq1<<9) + pressed;//add w to seq1
-		    5'b00100: seq1 <= (seq1<<9) + pressed;//add e to seq1
-		    5'b00010: seq1 <= (seq1<<9) + pressed;//add r to seq1
-		    5'b00001: seq1 <= (seq1<<9) + pressed;//add t to seq1
+		    5'b10000: seq1 <= (seq1<<5) + pressed;//add q to seq1
+		    5'b01000: seq1 <= (seq1<<5) + pressed;//add w to seq1
+		    5'b00100: seq1 <= (seq1<<5) + pressed;//add e to seq1
+		    5'b00010: seq1 <= (seq1<<5) + pressed;//add r to seq1
+		    5'b00001: seq1 <= (seq1<<5) + pressed;//add t to seq1
 		endcase
 	    end
-	else if (SW[4:0] == 5'b00100 && counter<4'b1000)
+	else if (SW[4:1] == 4'b0010 && counter<4'b1000)
 	    begin
 		out <= 5'b00100;
 		counter <= counter + 4'b0001;
 		case(pressed)
-		    5'b10000: seq2 <= (seq2<<9) + pressed;//add q to seq2
-		    5'b01000: seq2 <= (seq2<<9) + pressed;//add w to seq2
-		    5'b00100: seq2 <= (seq2<<9) + pressed;//add e to seq2
-		    5'b00010: seq2 <= (seq2<<9) + pressed;//add r to seq2
-		    5'b00001: seq2 <= (seq2<<9) + pressed;//add t to seq2
+		    5'b10000: seq2 <= (seq2<<5) + pressed;//add q to seq2
+		    5'b01000: seq2 <= (seq2<<5) + pressed;//add w to seq2
+		    5'b00100: seq2 <= (seq2<<5) + pressed;//add e to seq2
+		    5'b00010: seq2 <= (seq2<<5) + pressed;//add r to seq2
+		    5'b00001: seq2 <= (seq2<<5) + pressed;//add t to seq2
 		endcase
 	    end
 	else if (SW[2:1] != 2'b10 && SW[2:1] != 2'b01)
-	    out <= 0;
-	    counter <= 0;
+	    begin
+	        out <= 0;
+	        counter <= 0;
+	    end
     end
 
     reg tester;
-    reg [5:0] out2;
+    reg [4:0] out2;
     always @(negedge clk2)
     begin
 	if (SW[4:3] == 2'b00) 
@@ -108,14 +114,14 @@ module main (
 	    begin
 		tester <= 1;
 		counter1 <= counter1 + 4'b0001;
-		out2 <= seqtemp1[39:34];
+		out2 <= seqtemp1[39:35];
 		seqtemp1 <= seqtemp1<<5;
 	    end
 	if (SW[2:1] == 2'b00 && SW[4] == 1'b1 && counter2<4'b1000)
 	    begin
 		tester <= 1;
 		counter2 <= counter2 + 4'b0001;
-		out2 <= seqtemp2[80:34];
+		out2 <= seqtemp2[39:35];
 		seqtemp2 <= seqtemp2<<5;
 	    end
     end
