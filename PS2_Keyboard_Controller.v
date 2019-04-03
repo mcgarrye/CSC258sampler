@@ -121,8 +121,7 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 1) (
 	inout PS2_CLK,
 	inout PS2_DAT,
 
-	output q, w, e, r, t, y, u, i, o,
-	output left, right, up, down
+	output q, w, e, r, t
 	);
 
 	// A flag indicating when the keyboard has sent a new byte.
@@ -144,34 +143,20 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 1) (
 		W_CODE = 8'h1D,
 		E_CODE = 8'h24,
 		R_CODE = 8'h2D,
-		T_CODE = 8'h2C,
-		Y_CODE = 8'h35,
-		U_CODE = 8'h3C,
-		I_CODE = 8'h43,
-		O_CODE = 8'h44,
-		LEFT_CODE  = 8'h6B,
-		RIGHT_CODE = 8'h74,
-		UP_CODE    = 8'h75,
-		DOWN_CODE  = 8'h72;
+		T_CODE = 8'h2C;
 			
 	reg [1:0] curr_state;
 
 	// Press signals are high when their corresponding key is being pressed,
 	// and low otherwise. They directly represent the keyboard's state.
 	reg q_press, w_press, e_press, r_press, o_press;
-	reg t_press, y_press, u_press, i_press, p_press;
-	reg a_press, s_press, d_press;
-	reg f_press, g_press, h_press;
-	reg left_press, right_press, up_press, down_press;
+	reg t_press;
 
 	// Lock signals prevent a key press signal from going high for more than one
 	// clock tick when pulse mode is enabled. A key becomes 'locked' as soon as
 	// it is pressed down.
 	reg q_lock, w_lock, e_lock, r_lock, o_lock;
-	reg t_lock, y_lock, u_lock, i_lock, p_lock;
-	reg a_lock, s_lock, d_lock;
-	reg f_lock, g_lock, h_lock;
-	reg left_lock, right_lock, up_lock, down_lock;
+	reg t_lock;
 
 	// Output is equal to the key press wires in mode 0 (hold), and is similar in
 	// mode 1 (pulse) except the signal is lowered when the key's lock goes high.
@@ -181,15 +166,6 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 1) (
 	assign e = e_press && ~(e_lock && PULSE_OR_HOLD);
 	assign r = r_press && ~(r_lock && PULSE_OR_HOLD);
 	assign t = t_press && ~(t_lock && PULSE_OR_HOLD);
-	assign y = y_press && ~(y_lock && PULSE_OR_HOLD);
-	assign u = u_press && ~(u_lock && PULSE_OR_HOLD);
-	assign i = i_press && ~(i_lock && PULSE_OR_HOLD);
-	assign o = o_press && ~(o_lock && PULSE_OR_HOLD);
-
-	assign left  = left_press && ~(left_lock && PULSE_OR_HOLD);
-	assign right = right_press && ~(right_lock && PULSE_OR_HOLD);
-	assign up    = up_press && ~(up_lock && PULSE_OR_HOLD);
-	assign down  = down_press && ~(down_lock && PULSE_OR_HOLD);
 	 
 	// Core PS/2 driver.
 	PS2_Controller #(.INITIALIZE_MOUSE(0)) core_driver(
@@ -216,15 +192,6 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 1) (
 		e_lock <= e_press;
 		r_lock <= r_press;
 		t_lock <= t_press;
-		y_lock <= y_press;
-		u_lock <= u_press;
-		i_lock <= i_press;
-		o_lock <= o_press;
-
-		left_lock <= left_press;
-		right_lock <= right_press;
-		up_lock <= up_press;
-		down_lock <= down_press;
 
 		if (~reset) begin
 			curr_state <= MAKE;
@@ -235,14 +202,6 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 1) (
 			e_press <= 1'b0;
 			r_press <= 1'b0;
 			t_press <= 1'b0;
-			y_press <= 1'b0;
-			u_press <= 1'b0;
-			i_press <= 1'b0;
-			o_press <= 1'b0;
-			left_press  <= 1'b0;
-			right_press <= 1'b0;
-			up_press    <= 1'b0;
-			down_press  <= 1'b0;
 
 
 			q_lock <= 1'b0;
@@ -250,14 +209,6 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 1) (
 			e_lock <= 1'b0;
 			r_lock <= 1'b0;
 			t_lock <= 1'b0;
-			y_lock <= 1'b0;
-			u_lock <= 1'b0;
-			i_lock <= 1'b0;
-			o_lock <= 1'b0;
-			left_lock  <= 1'b0;
-			right_lock <= 1'b0;
-			up_lock    <= 1'b0;
-			down_lock  <= 1'b0;
 
 		end
 		else if (byte_received) begin
@@ -271,16 +222,6 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 1) (
 				E_CODE: e_press <= curr_state == MAKE;
 				R_CODE: r_press <= curr_state == MAKE;
 				T_CODE: t_press <= curr_state == MAKE;
-				Y_CODE: y_press <= curr_state == MAKE;
-				U_CODE: u_press <= curr_state == MAKE;
-				I_CODE: i_press <= curr_state == MAKE;
-				O_CODE: o_press <= curr_state == MAKE;
-
-				LEFT_CODE:  left_press  <= curr_state == MAKE;
-				RIGHT_CODE: right_press <= curr_state == MAKE;
-				UP_CODE:    up_press    <= curr_state == MAKE;
-				DOWN_CODE:  down_press  <= curr_state == MAKE;
-
 				// State transition logic.
 				// An F0 signal indicates a key is being released. An E0 signal
 				// means that a secondary signal is being used, which will be
